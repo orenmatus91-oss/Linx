@@ -69,12 +69,26 @@ main{display:flex;flex-direction:column;min-width:0}
 .bubble img{max-width:100%;border-radius:8px}
 .attachments{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .attachment{font-size:12px;padding:3px 8px;border:1px solid var(--border);border-radius:999px;background:var(--panel2)}
-.composer{border-top:0;padding:6px 10px;padding-bottom:max(8px,env(safe-area-inset-bottom));background:transparent}
+.composer{border-top:0;padding:6px 10px;padding-bottom:max(20px,calc(env(safe-area-inset-bottom) + 12px));background:transparent}
+/* In standalone PWA mode the home-indicator zone eats into the bottom of the
+   viewport, which was clipping the composer. Add extra clearance so the
+   input + send button always sit fully above the home indicator. */
+@media (display-mode:standalone){
+  .composer{padding-bottom:max(34px,calc(env(safe-area-inset-bottom) + 18px))}
+}
 .composer .row{max-width:820px;margin:0 auto;display:flex;gap:6px;align-items:center;background:var(--panel2);border:1px solid var(--border);border-radius:22px;padding:4px 6px}
 .composer textarea{flex:1;background:transparent;border:0;outline:0;resize:none;min-height:24px;height:24px;max-height:160px;padding:4px 6px;font-size:16px;line-height:1.3;overflow-y:hidden}
 input[type=text],input[type=password],textarea.ta{font-size:16px}
-.icon-btn{background:transparent;border:0;color:var(--muted);cursor:pointer;padding:6px;border-radius:8px}
+.icon-btn{background:transparent;border:0;color:var(--muted);cursor:pointer;padding:6px;border-radius:8px;touch-action:manipulation}
 .icon-btn:hover{background:var(--border);color:var(--text)}
+.icon-btn:active{background:var(--border);color:var(--text)}
+/* iOS WebView sometimes routes taps to inner SVG nodes instead of bubbling
+   to the button itself, which made the sidebar new-chat / keys / memory
+   icons feel unresponsive. Forcing the SVG to be click-transparent makes
+   the <button> reliably receive every tap. */
+.icon-btn svg,.icon-btn svg *{pointer-events:none}
+/* Make the three sidebar action icons a comfortable 44pt tap target. */
+.side-actions .icon-btn{min-height:48px;display:grid;place-items:center;padding:6px}
 .send{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border:0;border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:600;margin-right:10px}
 .send[disabled]{opacity:.5;cursor:not-allowed}
 .pending{display:flex;gap:6px;flex-wrap:wrap;max-width:820px;margin:0 auto;padding:0 4px 8px}
