@@ -811,6 +811,15 @@ setTimeout(applyLayout,100);
 setTimeout(applyLayout,500);
 $('#input').addEventListener('input',autoGrow);
 $('#toggleTheme').onclick=()=>{state.theme=state.theme==='light'?'dark':'light';document.body.classList.toggle('light',state.theme==='light');save()};
+// The .app element has will-change:transform (needed for the keyboard /
+// visualViewport layout fix), which makes it its own stacking context. The
+// backdrop overlay was authored as a sibling of .app, so even though the
+// sidebar has a higher z-index than the backdrop INSIDE .app's context, in
+// the document's root stacking order .app rendered below the backdrop —
+// meaning the backdrop covered the sidebar and every tap closed it. Moving
+// the backdrop into .app puts both into the same stacking context, so the
+// sidebar's z-index wins and its buttons receive taps normally.
+try{const _app=document.querySelector('.app');const _bd=document.getElementById('backdrop');if(_app&&_bd&&_bd.parentNode!==_app)_app.appendChild(_bd)}catch(e){}
 function toggleSide(open){const a=document.querySelector('aside');const b=$('#backdrop');const willOpen=open===undefined?!a.classList.contains('open'):open;a.classList.toggle('open',willOpen);b.classList.toggle('show',willOpen)}
 $('#burger').onclick=()=>toggleSide();
 $('#closeSide').onclick=()=>toggleSide(false);
